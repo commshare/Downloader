@@ -467,7 +467,7 @@ void ftp_pwd(int control_sockfd)
             currendir[i++]=*(ptr);
             ptr++;
         }
-        currendir[i]='/0';
+        currendir[i]='\0';
         printf("current directory is:%s\n",currendir);
 
     }
@@ -819,7 +819,7 @@ int ftp_download(int control_sockfd)
     FILE *fd;
     int i,j;
     int data_sockfd;
-    /\rest
+    //rest
     ftp_rest(control_sockfd);
     //type
     zeromery(recvline,1024);
