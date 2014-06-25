@@ -77,7 +77,8 @@ int  main(int argc,char **argv)
                     zeromery(path,60);
                     printf("创建的路径名: ");
                     scanf("%s",path);
-                    printf("s/n",path);
+                    printf("s
+",path);
                     ftp_creat_mkd(path,control_sockfd);
                 }
                 if(strncmp(cmd,"back",4)==0)
@@ -93,7 +94,8 @@ int  main(int argc,char **argv)
                     zeromery(path,60);
                     printf("要到的路径：");
                     scanf("%s",path);
-                    printf("%s/n",path);
+                    printf("%s
+",path);
                     ftp_changdir(path,control_sockfd);
                 }
                 if(strncmp(cmd,"get",3)==0)
@@ -108,11 +110,11 @@ int  main(int argc,char **argv)
                 }
                 if(strncmp(cmd,"quit",4)==0)
                 {
-                    printf("bye^_^/n");
+                    printf("bye^_^");
                     close(control_sockfd);
                     break;
                 }
-                printf("支持 list,pwd,mkdir,back,cd,up,get/n");    
+                printf("支持 list,pwd,mkdir,back,cd,up,get");    
         }
         
     }
@@ -122,7 +124,7 @@ int  main(int argc,char **argv)
         printf("Can not login vsftpd");
         for(i=2;i>0;i--)
         {
-            printf("你还有 %d 登录机会/n",i);            
+            printf("你还有 %d 登录机会",i);            
             login();
             if(login_yes==1)
             {
@@ -131,7 +133,7 @@ int  main(int argc,char **argv)
         }
         if(i==0)
         {
-            printf("你不能在登录！/n");
+            printf("你不能在登录！\n");
             close(control_sockfd);
         }
             
@@ -155,13 +157,13 @@ int login()
 
     //获取hostent中相关参数
     char name[MAXSIZE],password[MAXSIZE];
-    printf("please enter the hostname/n");
+    printf("please enter the hostname\n");
     printf("ftp-> ");
     scanf("%s",name);
     host=gethostbyname(name);
     if(host==NULL)
     {
-        printf("get host by name is error!/n");
+        printf("get host by name is error!\n");
         login_yes=0;
     }
     else
@@ -170,7 +172,7 @@ int login()
         control_sockfd=socket(AF_INET,SOCK_STREAM,0);
         if(control_sockfd<0)
         {
-            printf("socket is error/n");
+            printf("socket is error\n");
             login_yes=0;
         }
     
@@ -185,19 +187,19 @@ int login()
         char addr[MAXSIZE];
         if((connect(control_sockfd,(SA*)&serv_addr,sizeof(serv_addr)))<0)
         {
-            printf("connect is error/n");
+            printf("connect is error\n");
             login_yes=0;
         }
-        printf("connect to %s/n",inet_ntop(AF_INET,host->h_addr,addr,1024));
+        printf("connect to %s\n",inet_ntop(AF_INET,host->h_addr,addr,1024));
         recvdate=recv(control_sockfd,recvline,sizeof(recvline),0);
         if(recvdate==-1)
         {
-            printf("recvdate is connect error/n");
+            printf("recvdate is connect error\n");
             login_yes=0;
         }
         else if(strncmp(recvline,"220",3)==0)
         {
-            printf("connect success,pelase enter username/n");
+            printf("connect success,pelase enter username\n");
             login_yes=1;
         }
         else 
@@ -216,22 +218,22 @@ int login()
         scanf("%s",name);//可以支持匿名登录vsftpd
         strcat(sendline,"USER ");
         strcat(sendline,name);
-        strcat(sendline,"/r/n");
-        printf("--->%s/n",sendline);
+        strcat(sendline,"\r\n");
+        printf("--->%s\n",sendline);
         sendbytes=send(control_sockfd,sendline,strlen(sendline),0);
         if(sendbytes==-1)
         {
-            printf("send is wrong/n");
+            printf("send is wrong\n");
             login_yes=0;
         }
         recvbytes=recv(control_sockfd,recvline,sizeof(recvline),0);
         if(strncmp(recvline,"331",3)==0)
         {
-            printf("331 please specify the password./n");
+            printf("331 please specify the password.\n");
         }
         else
         {
-            printf("recv date is error./n");
+            printf("recv date is error.\n");
             login_yes=0;
         }
         zeromery(sendline,1024);
@@ -240,23 +242,23 @@ int login()
         scanf("%s",password);
         strcat(sendline,"PASS ");
         strcat(sendline,password);
-        strcat(sendline,"/r/n");
-        printf("--->%s/n",sendline);
+        strcat(sendline,"\r\n");
+        printf("--->%s\n",sendline);
         sendbytes=send(control_sockfd,sendline,strlen(sendline),0);
         if(sendbytes==-1)
         {
-            printf("pass send is error/n");
+            printf("pass send is error\n");
             login_yes=0;
         }
         recvbytes=recv(control_sockfd,recvline,sizeof(recvline),0);
         if(strncmp(recvline,"230",3)==0)
         {
-            printf("login success!/n");
+            printf("login success!\n");
             login_yes=1;
         }
         else 
         {
-            printf("pass recv is error/n");
+            printf("pass recv is error\n");
             login_yes=0;
         }
 
@@ -266,30 +268,30 @@ int login()
         zeromery(recvline,1024);
         strcat(sendline,"REST ");
         strcat(sendline,"0");
-        strcat(sendline,"/r/n");
-        printf("--->%s/n",sendline);
+        strcat(sendline,"\r\n");
+        printf("--->%s\n",sendline);
         sendbytes=send(control_sockfd,sendline,strlen(sendline),0);
         if(sendbytes==-1)
         {
-            printf("rest send is error!/n");
+            printf("rest send is error!\n");
             login_yes=0;
         }
         recvbytes=recv(control_sockfd,recvline,sizeof(recvline),0);
         if(recvbytes==-1)
         {
-            printf("rest recv date is error./n");    
+            printf("rest recv date is error.\n");    
             login_yes=0;    
         }
         if(strncmp(recvline,"350 Restart position accepted (0).",34)==0)
         {
             npsupport=1;
-            printf("support 断点续传/n");
+            printf("support 断点续传\n");
             login_yes=1;
         }
         else
         {
             npsupport=0;
-            printf("not support 断点续传/n");
+            printf("not support 断点续传\n");
             login_yes=0;    
         }
     
@@ -298,18 +300,18 @@ int login()
         zeromery(recvline,1024);
         zeromery(sendline,1024);
         strcat(sendline,"SYST");
-        strcat(sendline,"/r/n");
-        printf("--->%s/n",sendline);
+        strcat(sendline,"\r\n");
+        printf("--->%s\n",sendline);
         sendbytes=send(control_sockfd,sendline,strlen(sendline),0);
         if(sendbytes==-1)
         {
-            printf("syst send is error/n");
+            printf("syst send is error\n");
             login_yes=0;
         }
         recvbytes=recv(control_sockfd,recvline,sizeof(recvline),0);
         if(recvbytes==-1)
         {
-            printf("syst recv is error/n");
+            printf("syst recv is error\n");
             login_yes=0;
         }
         if(strncmp(recvline,"215 UNIX Type: L8",17)==0)
@@ -319,7 +321,7 @@ int login()
         }
         else 
         {
-            printf("syst recv connectin is error/n");
+            printf("syst recv connectin is error\n");
             login_yes=0;
         }    
     }
@@ -348,11 +350,11 @@ void ftp_quit(int control_sockfd )
     zeromery(sendline,1024);
     zeromery(recvline,1024);
     strcat(sendline,"QUIT");
-    strcat(sendline,"/r/n");
+    strcat(sendline,"\r\n");
     sendbytes=send(control_sockfd,sendline,strlen(sendline),0);
     if(sendbytes<0)
     {
-        printf("quit send is error!/n");
+        printf("quit send is error!\n");
         exit(1);
     }
     recvbytes=recv(control_sockfd,recvline,strlen(recvline),0);
@@ -363,7 +365,7 @@ void ftp_quit(int control_sockfd )
     }
     else
     {
-        printf("quit recv is error!/n");
+        printf("quit recv is error!\n");
         exit(1);
     }
 }
@@ -380,8 +382,8 @@ void ftp_creat_mkd(char *path,int control_sockfd)
     int issuccess;
     strcat(sendline,"MKD ");
     strcat(sendline,path);
-    strcat(sendline,"/r/n");
-    printf("%s/n",sendline);
+    strcat(sendline,"\r\n");
+    printf("%s\n",sendline);
     sendbytes=send(control_sockfd,sendline,strlen(sendline),0);
     if(sendbytes<0)
     {
@@ -411,34 +413,34 @@ void  ftp_changdir(char *dir,int control_sockfd)
     zeromery(recvline,1024);
     strcat(sendline,"CWD ");
     strcat(sendline,dir);
-    strcat(sendline,"/r/n");
-    printf("%s/n",sendline);
+    strcat(sendline,"\r\n");
+    printf("%s\n",sendline);
     sendbytes=send(control_sockfd,sendline,strlen(sendline),0);
     if(sendbytes<0)
     {
-        printf("cwd send is error!/n");
+        printf("cwd send is error!\n");
     }
     recvbytes=recv(control_sockfd,recvline,sizeof(recvline),0);
     if(recvbytes<0)
     {
-        printf("cwd recv is error!/n");
+        printf("cwd recv is error!\n");
     }
     if(strncmp(recvline,"250",3)==0)
     {
                 char buf[55];
-                snprintf(buf,39,">>> %s/n",recvline);
-                printf("%s/n",buf);
+                snprintf(buf,39,">>> %s\n",recvline);
+                printf("%s\n",buf);
     }
     else
     {
-        printf("cwd chdir is error!/n");
+        printf("cwd chdir is error!\n");
         exit(1);
     }
 }
 
 
 //pwd 命令函数
-//在应答中返回当前工作目录，“pwd”+/r/n
+//在应答中返回当前工作目录，“pwd”+\r\n
 void ftp_pwd(int control_sockfd)
 {
     int recvbytes,sendbytes;
@@ -446,11 +448,11 @@ void ftp_pwd(int control_sockfd)
     zeromery(sendline,1024);
     zeromery(recvline,1024);
     strcat(sendline,"PWD");
-    strcat(sendline,"/r/n");
+    strcat(sendline,"\r\n");
     sendbytes=send(control_sockfd,sendline,strlen(sendline),0);
     if(sendbytes<0)
     {
-        printf("pwd,send is error/n");
+        printf("pwd,send is error\n");
     }
     recvbytes=recv(control_sockfd,recvline,sizeof(recvline),0);
     if(strncmp(recvline,"257",3)==0)
@@ -466,12 +468,12 @@ void ftp_pwd(int control_sockfd)
             ptr++;
         }
         currendir[i]='/0';
-        printf("current directory is:%s/n",currendir);
+        printf("current directory is:%s\n",currendir);
 
     }
     else
     {
-        printf("pwd,recv is error!/n");
+        printf("pwd,recv is error!\n");
     }
 }
 
@@ -494,7 +496,7 @@ void ftp_list(int control_sockfd)
     zeromery(selectdata_mode_tran,1024);
     zeromery(sendline,1024);
     zeromery(recvline,1024);
-    //printf("ftp->ftp协议工作方式选择（pasv or port）/n");
+    //printf("ftp->ftp协议工作方式选择（pasv or port）\n");
     //printf("ftp->");
 //    scanf("%s",selectdata_mode_tran);
     //if(strncmp(selectdata_mode_tran,"pasv",4)==0)
@@ -509,24 +511,24 @@ void ftp_list(int control_sockfd)
     if(pasv_or_port==0)
     {
         strcat(sendline,"PASV");
-        strcat(sendline,"/r/n");
+        strcat(sendline,"\r\n");
         sendbytes=send(control_sockfd,sendline,strlen(sendline),0);
         if(sendbytes<0)
         {
-            printf("pasv send is error!/n");
+            printf("pasv send is error!\n");
         }
         recvbytes=recv(control_sockfd,recvline,sizeof(recvline),0);
         if(recvbytes<0)
         {
-            printf("pasv recv is error!/n");
+            printf("pasv recv is error!\n");
         }
         if(strncmp(recvline,"227",3)==0)
         {
-            printf("%s/n",recvline);
+            printf("%s\n",recvline);
         }
         else
         {
-            printf("pasv recv is error!/n");
+            printf("pasv recv is error!\n");
         }    
         //处理ftp server 端口
         char *ptr1,*ptr2;
@@ -561,7 +563,7 @@ void ftp_list(int control_sockfd)
         serv_addr.sin_port=htons(data_serviceport);
         if(connect(data_sockfd,(struct sockaddr*)&serv_addr,sizeof(struct sockaddr))==-1)
         {
-            printf("pasv data connect is error!/n");
+            printf("pasv data connect is error!\n");
         }
     }
     //port mode
@@ -570,7 +572,7 @@ void ftp_list(int control_sockfd)
         data_sockfd=socket(AF_INET,SOCK_STREAM,0);
         if(data_sockfd<0)
         {
-            printf("创建数据端口连接失败！/n");
+            printf("创建数据端口连接失败！\n");
         }
         serv_addr.sin_family=AF_INET;
         serv_addr.sin_addr.s_addr=INADDR_ANY;
@@ -588,7 +590,7 @@ void ftp_list(int control_sockfd)
         zeromery(ip,1024);
         zeromery(data,1024);
         inet_ntop(AF_INET,&(serv_addr.sin_addr),ip,sizeof(ip));
-        printf("%s/n",ip);
+        printf("%s\n",ip);
         i=data_sockfd/256;
         j=data_sockfd%256;
 
@@ -610,22 +612,22 @@ void ftp_list(int control_sockfd)
         strcat(sendline,itoa(i,data,10));
         strcat(sendline,",");
         strcat(sendline,itoa(j,data,10));
-        strcat(sendline,"/r/n");
-        printf("--->%s/n",sendline);
+        strcat(sendline,"\r\n");
+        printf("--->%s\n",sendline);
         sendbytes=send(control_sockfd,sendline,strlen(sendline),0);
         if(sendbytes<0)
         {
-            printf("port send is error!/n");
+            printf("port send is error!\n");
             exit(1);
         }
         recvbytes=recv(control_sockfd,recvline,sizeof(recvline),0);
         if(strncmp(recvline,"200",3)==0)
         {
-            printf("%s/n",recvline);
+            printf("%s\n",recvline);
         }
         else
         {
-            printf("port recv is error!/n");
+            printf("port recv is error!\n");
         }
 
     }
@@ -635,20 +637,20 @@ void ftp_list(int control_sockfd)
     zeromery(sendline,1024);
     strcat(sendline,"TYPE ");
     strcat(sendline,"I");
-    strcat(sendline,"/r/n");
+    strcat(sendline,"\r\n");
     sendbytes=send(control_sockfd,sendline,strlen(sendline),0);
     if(sendbytes<0)
     {
-        printf(" type send is error!/n");
+        printf(" type send is error!\n");
     }
     recvbytes=recv(control_sockfd,recvline,sizeof(recvline),0);
     if(strncmp(recvline,"200",3)==0)
     {
-        printf("使用二进制传输数据/n");
+        printf("使用二进制传输数据\n");
     }
     else
     {
-        printf("type recv is error!/n");
+        printf("type recv is error!\n");
     }
         
 
@@ -656,11 +658,11 @@ void ftp_list(int control_sockfd)
     zeromery(sendline,1024);
     zeromery(recvline,1024);
     strcat(sendline,"LIST");
-    strcat(sendline,"/r/n");
+    strcat(sendline,"\r\n");
     sendbytes=send(control_sockfd,sendline,strlen(sendline),0);
     if(sendbytes<0)
     {
-        printf("list send is error!/n");
+        printf("list send is error!\n");
     }
 recvdata:
     sleep(1);
@@ -736,20 +738,20 @@ void ftp_back(int control_sockfd)
     zeromery(sendline,1024);
     zeromery(recvline,1024);
     strcat(sendline,"CDUP");
-    strcat(sendline,"/r/n");
+    strcat(sendline,"\r\n");
     sendbytes=send(control_sockfd,sendline,strlen(sendline),0);
     if(sendbytes<0)
     {
-        printf("cdup send is error !/n");
+        printf("cdup send is error !\n");
     }
     recvbytes=recv(control_sockfd,recvline,sizeof(recvline),0);
     if(recvbytes<0)
     {
-        printf("cdup recv is error !/n");
+        printf("cdup recv is error !\n");
     }
     if(strncmp(recvline,"250",3)==0)
     {
-        printf("请求的文件操作已经成功/n");
+        printf("请求的文件操作已经成功\n");
     }
 }
 //stru命令的实现
@@ -761,16 +763,16 @@ void ftp_stru(int control_sockfd)
     zeromery(recvline,1024);
     strcat(sendline,"STRU");
     strcat(sendline,"F");
-    strcat(sendline,"/r/n");
+    strcat(sendline,"\r\n");
     sendbytes=send(control_sockfd,sendline,strlen(sendline),0);
     if(sendbytes<0)
     {
-        printf("stru send is error!/n");
+        printf("stru send is error!\n");
     }
     recvbytes=recv(control_sockfd,recvline,sizeof(recvline),0);
     if(recvbytes<0)
     {
-        printf("stru recv is error!/n");
+        printf("stru recv is error!\n");
     }
     if(strncmp(recvline,"200",3)==0)
     {
@@ -789,20 +791,20 @@ void ftp_rest(int control_sockfd)
     zeromery(recvline,1024);
     strcat(sendline,"REST ");
     strcat(sendline,"500");
-    strcat(sendline,"/r/n");
+    strcat(sendline,"\r\n");
     sendbytes=send(control_sockfd,sendline,strlen(sendline),0);
     if(sendbytes<0)
     {
-        printf("stru send is error!/n");
+        printf("stru send is error!\n");
     }
     recvbytes=recv(control_sockfd,recvline,sizeof(recvline),0);
     if(recvbytes<0)
     {
-        printf("stru recv is error!/n");
+        printf("stru recv is error!\n");
     }
     if(strncmp(recvline,"350",3)==0)
     {
-        printf("%s/n",recvline);
+        printf("%s\n",recvline);
     }
 }
 
@@ -817,27 +819,27 @@ int ftp_download(int control_sockfd)
     FILE *fd;
     int i,j;
     int data_sockfd;
-    //rest
+    /\rest
     ftp_rest(control_sockfd);
     //type
     zeromery(recvline,1024);
     zeromery(sendline,1024);
     strcat(sendline,"TYPE ");
     strcat(sendline,"I");
-    strcat(sendline,"/r/n");
+    strcat(sendline,"\r\n");
     sendbytes=send(control_sockfd,sendline,strlen(sendline),0);
     if(sendbytes<0)
     {
-            printf(" type send is error!/n");
+            printf(" type send is error!\n");
     }
     recvbytes=recv(control_sockfd,recvline,sizeof(recvline),0);
     if(strncmp(recvline,"200",3)==0)
     {
-        printf("使用二进制传输数据/n");
+        printf("使用二进制传输数据\n");
     }
     else
     {
-        printf("type recv is error!/n");
+        printf("type recv is error!\n");
     }
 
     if(npsupport==1)
@@ -858,27 +860,27 @@ int ftp_download(int control_sockfd)
         if(pasv_or_port==0)
         {
             strcat(sendline,"PASV");
-            strcat(sendline,"/r/n");
+            strcat(sendline,"\r\n");
             sendbytes=send(control_sockfd,sendline,strlen(sendline),0);
             if(sendbytes<0)
             {
-                printf("pasv send is error!/n");
+                printf("pasv send is error!\n");
             }
             zeromery(recvline,1024);
             recvbytes=recv(control_sockfd,recvline,sizeof(recvline),0);
             if(recvbytes<0)
             {
-                printf("pasv recv is error!/n");
+                printf("pasv recv is error!\n");
             }
             if(strncmp(recvline,"227",3)==0)
             {
                 char buf[55];
-                snprintf(buf,51,">>> %s/n",recvline);
-                printf("%s/n",buf);
+                snprintf(buf,51,">>> %s\n",recvline);
+                printf("%s\n",buf);
             }
             else
             {
-                printf("pasv recv is error!/n");
+                printf("pasv recv is error!\n");
             }    
             //处理ftp server 端口
             char *ptr1,*ptr2;
@@ -913,17 +915,17 @@ int ftp_download(int control_sockfd)
             serv_addr.sin_port=htons(data_serviceport);
             if(connect(data_sockfd,(struct sockaddr*)&serv_addr,sizeof(struct sockaddr))==-1)
             {
-                printf("pasv data connect is error!/n");
+                printf("pasv data connect is error!\n");
             }
             printf("remote-file-pathname=");
             scanf("%s",pathname);
             printf("local-file-pathname=");
             scanf("%s",localpathname);
-            printf("local:%s remore:%s/n",localpathname,pathname);
+            printf("local:%s remore:%s\n",localpathname,pathname);
             fd=fopen(localpathname,"w+");
             if(fd==NULL)
             {
-                printf("cannot open file/n");
+                printf("cannot open file\n");
                 exit(1);
             }
 
@@ -933,21 +935,21 @@ int ftp_download(int control_sockfd)
             zeromery(recvline,1024);
             strcat(sendline,"RETR ");
             strcat(sendline,pathname);
-            strcat(sendline,"/r/n");
-            printf("%s/n",sendline);
+            strcat(sendline,"\r\n");
+            printf("%s\n",sendline);
             sendbytes=send(control_sockfd,sendline,strlen(sendline),0);
             if(sendbytes<0)
             {
-                printf("retr send is error!/n");
+                printf("retr send is error!\n");
             }
             recvbytes=recv(control_sockfd,recvline,sizeof(recvline),0);
             if(recvbytes<0)
             {
-                printf("retr recv is error!/n");
+                printf("retr recv is error!\n");
             }
             if(strncmp(recvline,"400",3)>0)
             {
-                printf("return is error!/n");
+                printf("return is error!\n");
             }
         }
         //port mode
@@ -956,7 +958,7 @@ int ftp_download(int control_sockfd)
             data_sockfd=socket(AF_INET,SOCK_STREAM,0);
             if(data_sockfd<0)
             {
-                printf("创建数据端口连接失败！/n");
+                printf("创建数据端口连接失败！\n");
             }
             serv_addr.sin_family=AF_INET;
             serv_addr.sin_addr.s_addr=INADDR_ANY;
@@ -974,7 +976,7 @@ int ftp_download(int control_sockfd)
             zeromery(ip,1024);
             zeromery(data,1024);
             inet_ntop(AF_INET,&(serv_addr.sin_addr),ip,sizeof(ip));
-            printf("%s/n",ip);
+            printf("%s\n",ip);
             i=data_sockfd/256;
             j=data_sockfd%256;
 
@@ -996,22 +998,22 @@ int ftp_download(int control_sockfd)
             strcat(sendline,itoa(i,data,10));
             strcat(sendline,",");
             strcat(sendline,itoa(j,data,10));
-            strcat(sendline,"/r/n");
-            printf("--->%s/n",sendline);
+            strcat(sendline,"\r\n");
+            printf("--->%s\n",sendline);
             sendbytes=send(control_sockfd,sendline,strlen(sendline),0);
             if(sendbytes<0)
             {
-                printf("port send is error!/n");
+                printf("port send is error!\n");
                 exit(1);
             }
             recvbytes=recv(control_sockfd,recvline,sizeof(recvline),0);
             if(strncmp(recvline,"200",3)==0)
             {
-                printf("%s/n",recv);
+                printf("%s\n",recv);
             }
             else
             {
-                printf("port recv is error!/n");
+                printf("port recv is error!\n");
             }
 
         }*/
@@ -1056,7 +1058,7 @@ end:
     recvbytes=recv(control_sockfd,recvline,sizeof(recvline),0);
     if(strncmp(recvline,"226",3)==0)
     {
-    end:    printf("226 transfer complete/n");
+    end:    printf("226 transfer complete\n");
         close(data_sockfd);
     }*/
     return 0;
@@ -1080,20 +1082,20 @@ int ftp_up(int control_sockfd)
     zeromery(sendline,1024);
     strcat(sendline,"TYPE ");
     strcat(sendline,"I");
-    strcat(sendline,"/r/n");
+    strcat(sendline,"\r\n");
     sendbytes=send(control_sockfd,sendline,strlen(sendline),0);
     if(sendbytes<0)
     {
-            printf(" type send is error!/n");
+            printf(" type send is error!\n");
     }
     recvbytes=recv(control_sockfd,recvline,sizeof(recvline),0);
     if(strncmp(recvline,"200",3)==0)
     {
-        printf("使用二进制传输数据/n");
+        printf("使用二进制传输数据\n");
     }
     else
     {
-        printf("type recv is error!/n");
+        printf("type recv is error!\n");
     }
 
     if(npsupport==1)
@@ -1114,26 +1116,26 @@ int ftp_up(int control_sockfd)
         if(pasv_or_port==0)
         {
             strcat(sendline,"PASV");
-            strcat(sendline,"/r/n");
+            strcat(sendline,"\r\n");
             sendbytes=send(control_sockfd,sendline,strlen(sendline),0);
             if(sendbytes<0)
             {
-                printf("pasv send is error!/n");
+                printf("pasv send is error!\n");
             }
             recvbytes=recv(control_sockfd,recvline,sizeof(recvline),0);
             if(recvbytes<0)
             {
-                printf("pasv recv is error!/n");
+                printf("pasv recv is error!\n");
             }
             if(strncmp(recvline,"227",3)==0)
             {
                 char buf[55];
-                snprintf(buf,51,">>> %s/n",recvline);
-                printf("%s/n",buf);
+                snprintf(buf,51,">>> %s\n",recvline);
+                printf("%s\n",buf);
             }
             else
             {
-                printf("pasv recv is error!/n");
+                printf("pasv recv is error!\n");
             }    
             //处理ftp server 端口
             char *ptr1,*ptr2;
@@ -1168,17 +1170,17 @@ int ftp_up(int control_sockfd)
             serv_addr.sin_port=htons(data_serviceport);
             if(connect(data_sockfd,(struct sockaddr*)&serv_addr,sizeof(struct sockaddr))==-1)
             {
-                printf("pasv data connect is error!/n");
+                printf("pasv data connect is error!\n");
             }
                 printf("local-file-pathname=");
                 scanf("%s",pathname);
                 printf("remote-file-pathname=");
                 scanf("%s",localpathname);
-                printf("local:%s remore:%s/n",localpathname,pathname);
+                printf("local:%s remore:%s\n",localpathname,pathname);
                 fd=fopen(pathname,"r");
                 if(fd==NULL)
                 {
-                    printf("cannot open file,请重新输入！/n");
+                    printf("cannot open file,请重新输入！\n");
                 }
 
             //send the command retr;
@@ -1186,23 +1188,23 @@ int ftp_up(int control_sockfd)
             zeromery(recvline,1024);
             strcat(sendline,"STOR ");
             strcat(sendline,localpathname);
-            strcat(sendline,"/r/n");
-            printf("%s/n",sendline);
+            strcat(sendline,"\r\n");
+            printf("%s\n",sendline);
             sendbytes=send(control_sockfd,sendline,strlen(sendline),0);
             if(sendbytes<0)
             {
-                printf("stor send is error!/n");
+                printf("stor send is error!\n");
             }
             recvbytes=recv(control_sockfd,recvline,sizeof(recvline),0);
             if(recvbytes<0)
             {
-                printf("retr recv is error!/n");
+                printf("retr recv is error!\n");
             }
             if(strncmp(recvline,"150",3)==0)
             {
                 char buf[55];
-                snprintf(buf,25,">>> %s/n",recvline);
-                printf("%s/n",buf);
+                snprintf(buf,25,">>> %s\n",recvline);
+                printf("%s\n",buf);
             }
         }
         //port mode
@@ -1211,7 +1213,7 @@ int ftp_up(int control_sockfd)
             data_sockfd=socket(AF_INET,SOCK_STREAM,0);
             if(data_sockfd<0)
             {
-                printf("创建数据端口连接失败！/n");
+                printf("创建数据端口连接失败！\n");
             }
             serv_addr.sin_family=AF_INET;
             serv_addr.sin_addr.s_addr=INADDR_ANY;
@@ -1229,7 +1231,7 @@ int ftp_up(int control_sockfd)
             zeromery(ip,1024);
             zeromery(data,1024);
             inet_ntop(AF_INET,&(serv_addr.sin_addr),ip,sizeof(ip));
-            printf("%s/n",ip);
+            printf("%s\n",ip);
             i=data_sockfd/256;
             j=data_sockfd%256;
 
@@ -1251,22 +1253,22 @@ int ftp_up(int control_sockfd)
             strcat(sendline,itoa(i,data,10));
             strcat(sendline,",");
             strcat(sendline,itoa(j,data,10));
-            strcat(sendline,"/r/n");
-            printf("--->%s/n",sendline);
+            strcat(sendline,"\r\n");
+            printf("--->%s\n",sendline);
             sendbytes=send(control_sockfd,sendline,strlen(sendline),0);
             if(sendbytes<0)
             {
-                printf("port send is error!/n");
+                printf("port send is error!\n");
                 exit(1);
             }
             recvbytes=recv(control_sockfd,recvline,sizeof(recvline),0);
             if(strncmp(recvline,"200",3)==0)
             {
-                printf("%s/n",recv);
+                printf("%s\n",recv);
             }
             else
             {
-                printf("port recv is error!/n");
+                printf("port recv is error!\n");
             }
 
         }*/
@@ -1279,14 +1281,14 @@ int ftp_up(int control_sockfd)
         size=fread(buffer,1,sizeof(buffer),fd);
         if(ferror(fd))
         {
-            printf("read file data is error!/n");
+            printf("read file data is error!\n");
             break;
         }
         else
         {
             zeromery(sendline,1024);
             sendbytes=send(data_sockfd,buffer,size,0);
-            printf("传输了 %d 个字节/n",sendbytes);
+            printf("传输了 %d 个字节\n",sendbytes);
         }
         close(data_sockfd);
         recvbytes=recv(control_sockfd,recvline,sizeof(recvline),0);
